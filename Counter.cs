@@ -22,7 +22,10 @@ public class Counter : MonoBehaviour
         {
             count++;
             counterText.text = "Pucks with " + gameObject.tag.ToLower() + ": " + count;
-            other.gameObject.GetComponent<CapsuleCollider>().isTrigger = false;
+
+            gameManager.CalculateScore();
+            
+            other.gameObject.GetComponent<MeshCollider>().isTrigger = false;
         }
     }
 }
