@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> scoreAreas = new List<GameObject>();
-    private int[] counts = new int[4];
+    public int[] counts = new int[4];
     public TextMeshProUGUI totalScore;
     private int numberOfPucks = 30;
     
@@ -30,19 +31,16 @@ public class GameManager : MonoBehaviour
 
     public void CalculateScore()
     {
-        int i = 0;
-        
-        foreach(GameObject scoreArea in scoreAreas)
+        for(int i = 0; i < 4; i++)
         {
-            counts[i] = scoreArea.GetComponent<Counter>().count;
-            i++;
+            counts[i] = scoreAreas[i].GetComponent<Counter>().count;
         }
+        
+        minCount = counts.Min();
 
-        int minCount = counts.Min();
-
-        for(int j = 0; j < counts.Length; j++)
+        for(int i = 0; i < 4; i++)
         {
-            counts[i] = counts[j] - minCount;
+            counts[i] = counts[i] - minCount;
         }
 
         int score = minCount * 20 + counts[0] + counts[1] * 2 + counts[2] * 3 + counts[3] * 4;
