@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class Puck : MonoBehaviour
 {
+    private double speed = 10;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +15,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        transform.Translate(0, 0, 1 * Time.deltaTime);
     }
 }

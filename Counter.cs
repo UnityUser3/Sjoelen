@@ -8,8 +8,8 @@ using UnityEngine.UI;
 public class Counter : MonoBehaviour
 {
     public TextMeshProUGUI counterText;
-
-    private int count = 0;
+    public int count;
+    public GameManager gameManager;
 
     private void Start()
     {
@@ -18,7 +18,11 @@ public class Counter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        count += 1;
-        counterText.text = "Count : " + count;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            count++;
+            counterText.text = "Pucks with " + gameObject.tag.ToLower() + ": " + count;
+            other.gameObject.GetComponent<CapsuleCollider>().isTrigger = false;
+        }
     }
 }
