@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class Puck : MonoBehaviour
 {
-    private float speed = 1f;
+    public float speed;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * speed, ForceMode.Impulse);
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(0, 0, speed * Time.deltaTime);
+        if (transform.position.x < -0.7f)
+        {
+            Destroy(gameObject);
+        }
     }
 }

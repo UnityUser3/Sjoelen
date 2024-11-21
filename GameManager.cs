@@ -1,27 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> scoreAreas = new List<GameObject>();
-    public int[] counts = new int[4];
+    private int[] counts;
     public TextMeshProUGUI totalScore;
-    private int numberOfPucks = 30;
+    private int numberOfPucks;
+    public GameObject puck;
+    private bool isPlacingPuck;
+    private GameObject currentPuck;
+    private bool isPlaced;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        counts = new int[4];
+        numberOfPucks = 30;
+        isPlacingPuck = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         CalculateScore();
+        SpawnPuck();
         
         if (numberOfPucks <= 0)
         {
@@ -36,7 +45,7 @@ public class GameManager : MonoBehaviour
             counts[i] = scoreAreas[i].GetComponent<Counter>().count;
         }
         
-        minCount = counts.Min();
+        int minCount = counts.Min();
 
         for(int i = 0; i < 4; i++)
         {
@@ -47,6 +56,55 @@ public class GameManager : MonoBehaviour
 
         totalScore.text = "Total score: " + score;
     }
+
+    public void SpawnPuck()
+    {
+        if (!isPlacingPuck)
+        {
+            currentPuck = Instantiate(puck, new Vector3(0.75f, 0.007f, 0), Quaternion.Euler(0, -90, 0));
+            isPlacingPuck = true;
+            isPlaced = false;
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity) && !isPlaced)
+        {
+            currentPuck.transform.position = hit.point;
+        }
+
+        if (Input.GetMouseButtonUp(0) && !isPlaced)
+        {
+            isPlaced = true;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.A) && isPlaced)
+        {
+            currentPuck.transform.rotation = Quaternion.Euler(currentPuck.transform.rotation.x, currentPuck.transform.rotation.y - 1, currentPuck.transform.rotation.z);
+        }
+
+        if (Input.GetKeyUp(KeyCode.D) && isPlaced)
+        {
+            currentPuck.transform.rotation = Quaternion.Euler(currentPuck.transform.rotation.x, currentPuck.transform.rotation.y + 1, currentPuck.transform.rotation.z);
+        }
+
+        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<Puck>().speed < 0.35f && isPlaced)
+        {
+            currentPuck.GetComponent<Puck>().speed += 0.035f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<Puck>().speed > 0 && isPlaced)
+        {
+            currentPuck.GetComponent<Puck>().speed += 0.035f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.KeypadEnter))
+        {
+            currentPuck.GetComponent<Puck>().enabled = true;
+            isPlacingPuck = false;
+        }
+}
 
     public void EndGame()
     {
