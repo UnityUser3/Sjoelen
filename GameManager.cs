@@ -14,9 +14,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI totalScore;
     private int numberOfPucks;
     public GameObject puck;
-    private bool isPlacingPuck;
+    public bool isPlacingPuck;
     private GameObject currentPuck;
-    private bool isPlaced;
+    public bool isPlaced;
     
     // Start is called before the first frame update
     void Start()
@@ -29,12 +29,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CalculateScore();
-        SpawnPuck();
-        
-        if (numberOfPucks <= 0)
+        if (numberOfPucks > 0)
         {
-            EndGame();
+            SpawnPuck();
         }
     }
 
@@ -59,13 +56,15 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPuck()
     {
+        //Preparing to place puck
         if (!isPlacingPuck)
         {
-            currentPuck = Instantiate(puck, new Vector3(0.75f, 0.007f, 0), Quaternion.Euler(0, -90, 0));
+            currentPuck = Instantiate(puck, new Vector3(0.75f, 0.0061f, 0), Quaternion.Euler(0, -90, 0));
             isPlacingPuck = true;
             isPlaced = false;
         }
 
+        //Choosing position of puck
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -74,11 +73,12 @@ public class GameManager : MonoBehaviour
             currentPuck.transform.position = hit.point;
         }
 
-        if (Input.GetMouseButtonUp(0) && !isPlaced)
+        if (Input.GetMouseButtonUp(0) && !isPlaced && currentPuck.transform.position.y >= 0.00600006f)
         {
             isPlaced = true;
         }
         
+        //Adjusting direction of puck
         if (Input.GetKeyDown(KeyCode.A) && isPlaced)
         {
             currentPuck.transform.rotation = Quaternion.Euler(currentPuck.transform.rotation.x, currentPuck.transform.rotation.y - 1, currentPuck.transform.rotation.z);
@@ -89,25 +89,23 @@ public class GameManager : MonoBehaviour
             currentPuck.transform.rotation = Quaternion.Euler(currentPuck.transform.rotation.x, currentPuck.transform.rotation.y + 1, currentPuck.transform.rotation.z);
         }
 
-        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<Puck>().speed < 0.35f && isPlaced)
+        //Adjusting speed of puck
+        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<PuckStart>().speed < 0.05f && isPlaced)
         {
-            currentPuck.GetComponent<Puck>().speed += 0.035f;
+            currentPuck.GetComponent<PuckStart>().speed += 0.005f;
         }
 
-        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<Puck>().speed > 0 && isPlaced)
+        if (Input.GetKeyUp(KeyCode.W) && currentPuck.GetComponent<PuckStart>().speed > 0 && isPlaced)
         {
-            currentPuck.GetComponent<Puck>().speed += 0.035f;
+            currentPuck.GetComponent<PuckStart>().speed += 0.005f;
         }
 
+        //Placing puck
         if (Input.GetKeyUp(KeyCode.KeypadEnter))
         {
-            currentPuck.GetComponent<Puck>().enabled = true;
+            currentPuck.GetComponent<PuckStart>().enabled = true;
             isPlacingPuck = false;
+            numberOfPucks--;
         }
-}
-
-    public void EndGame()
-    {
-
     }
 }

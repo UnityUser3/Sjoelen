@@ -9,6 +9,7 @@ public class Counter : MonoBehaviour
 {
     public TextMeshProUGUI counterText;
     public int count;
+    public GameManager gameManager;
 
     private void Start()
     {
@@ -26,7 +27,7 @@ public class Counter : MonoBehaviour
         {
             count++;
             counterText.text = "Pucks with " + gameObject.tag.ToLower() + ": " + count;
-            
+            gameManager.GetComponent<GameManager>().CalculateScore();
             other.gameObject.GetComponent<MeshCollider>().isTrigger = false;
         }
     }
