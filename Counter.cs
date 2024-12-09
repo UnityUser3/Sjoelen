@@ -16,15 +16,18 @@ public class Counter : MonoBehaviour
         count = 0;
     }
 
+    private void Update()
+    {
+
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             count++;
             counterText.text = "Pucks with " + gameObject.tag.ToLower() + ": " + count;
-
-            gameManager.CalculateScore();
-            
+            gameManager.GetComponent<GameManager>().CalculateScore();
             other.gameObject.GetComponent<MeshCollider>().isTrigger = false;
         }
     }
